@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>    
+    <div>
+        <div>
+            <table>
+                <thead>
+                    <p>{{ titles[0] }}</p>
+                </thead>
+                <tbody>
+                    {{ tables[0]|safe }}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <p>{{ titles[1] }}</p>
+                </thead>
+                <tbody>
+                    {{ tables[1]|safe }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
