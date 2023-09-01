@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import requests
 import matplotlib.pyplot as plt
@@ -9,10 +9,29 @@ from pprint import pprint
 
 app = Flask(__name__)
 
-response = requests.get("https://draft.premierleague.com/api/league/507/details")
+code = 0
+response = requests.get(f"https://draft.premierleague.com/api/league/{code}/details")
 data = response.json()
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
+def league_code():
+    if request.method == "POST":
+        leagueCode = request.form["leagueCode"]
+
+        global code
+        code = leagueCode
+
+        global response
+        response = requests.get(f"https://draft.premierleague.com/api/league/{code}/details")
+
+        global data
+        data = response.json()
+
+        return redirect(url_for('home'))
+    
+    return render_template("league.html")
+
+@app.route("/home")
 def home():
     return render_template('home.html',  tables=[point_differential().to_html(classes='data'), trades().to_html(classes='data')], titles=["Point Differentials", "Transactions"])
 
