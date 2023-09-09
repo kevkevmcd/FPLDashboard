@@ -16,19 +16,11 @@ transaction_response = requests.get(f"https://draft.premierleague.com/api/draft/
 choices_response = requests.get(f"https://draft.premierleague.com/api/draft/{code}/choices")
 data = response.json()
 
-matches = data["matches"]
-league_entries = data["league_entries"]
-
+matches = ""
+league_entries = ""
+row = []
 columns = []
-for items in league_entries:
-    columns.append(items["id"])
-row = [x + 1 for x in range(38)]
-
 entry_names = {}
-for items in league_entries:
-    entry_id = items["id"]
-    entry_name = items["entry_name"]
-    entry_names[entry_id] = entry_name
 
 @app.route("/", methods=["GET", "POST"])
 def league_code():
@@ -50,13 +42,32 @@ def league_code():
         global data
         data = response.json()
 
+        global matches
+        matches = data["matches"]
+
+        global league_entries
+        league_entries = data["league_entries"]
+
+        global columns
+        for items in league_entries:
+            columns.append(items["id"])
+
+        global row    
+        row = [x + 1 for x in range(38)]
+
+        global entry_names
+        for items in league_entries:
+            entry_id = items["id"]
+            entry_name = items["entry_name"]
+            entry_names[entry_id] = entry_name
+
         return redirect(url_for('home'))
     
     return render_template("league.html")
 
 @app.route("/home")
 def home():
-    return render_template('home.html',  tables=[point_differential().to_html(classes='data'), weekly_trades().to_html(classes='data')], titles=["Point Differentials", "Transactions"])
+    return render_template('home.html',  tables=[point_differential().to_html(classes='data'), weekly_trades().to_html(classes='data'), combined_table().to_html(classes='data')], titles=["Point Differentials", "Transactions", "Combined"])
 
 def point_differential():
     league_entries = data['league_entries']
@@ -201,10 +212,10 @@ def combined_table():
 
     final_df = merged_df.sort_values('Points', ascending=False)
 
-    points_df_cumsum = weekly_win_loss_points().copy()
+    points_df_cumsum = weekly_win_loss_points()
 
-    last_valid_index = points_df_cumsum.apply(pd.Series.last_valid_index)
-    last_valid_column = points_df_cumsum.idxmax()
+    last_valid_index = points_df_cumsum.notna()[::-1].idxmax()
+    last_valid_column = last_valid_index.idxmax()
     current_gw = last_valid_index[last_valid_column] 
     final_df['Avg Gameweek Points'] = final_df['Total Points'] / current_gw
     final_df['Avg Gameweek Points'] = final_df['Avg Gameweek Points'].round(1)
