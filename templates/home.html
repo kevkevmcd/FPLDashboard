@@ -1,30 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>    
-    <div>
-        <div>
-            <table>
-                <thead>
-                    <p>{{ titles[0] }}</p>
-                </thead>
-                <tbody>
-                    {{ tables[0]|safe }}
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <table>
-                <thead>
-                    <p>{{ titles[1] }}</p>
-                </thead>
-                <tbody>
-                    {{ tables[1]|safe }}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Home</title>
+        </head>
+        <body>    
+            <div>
+                <div class="card">
+                    <table>
+                        <div class="card-header">
+                            <h4>{{ titles[0] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[0]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <div class="card">
+                    <table>
+                        <div class="card-header">
+                            <h4>{{ titles[1] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[1]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+    </html>
+{% endblock %}

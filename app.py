@@ -67,7 +67,11 @@ def league_code():
 
 @app.route("/home")
 def home():
-    return render_template('home.html',  tables=[point_differential().to_html(classes='data'), weekly_trades().to_html(classes='data'), combined_table().to_html(classes='data')], titles=["Point Differentials", "Transactions", "Combined"])
+    return render_template('home.html',  tables=[point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Point Differentials", "Transactions"])
+
+@app.route("/weekly_dashboard")
+def weekly_dash():
+    return render_template('weekly.html')
 
 def point_differential():
     league_entries = data['league_entries']
