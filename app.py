@@ -79,7 +79,7 @@ def home():
 
 @app.route("/weekly_dashboard")
 def weekly_dash():
-    return render_template('weekly.html', tables=[weekly_total_points().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Week Points", "Total Weekly Trades", "Point Differentials"])
+    return render_template('weekly.html', tables=[weekly_total_points().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_win_loss_points_cumsum().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Weekly Points Scored", "Points Per Week", "Total Weekly Trades", "Point Differentials"])
 
 def point_differential():
     league_entries = data['league_entries']
