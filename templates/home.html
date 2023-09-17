@@ -6,7 +6,9 @@
         <head>
             <title>Home</title>
         </head>
-        <body>    
+        <body>
+            <h1 style="text-align: center">{{ name }}</h1>
+            <br/>    
             <div>
                 <div class="card">
                     <table>
@@ -15,17 +17,6 @@
                         </div>
                         <tbody>
                             {{ tables[0]|safe }}
-                        </tbody>
-                    </table>
-                </div>
-                <br/>
-                <div class="card">
-                    <table>
-                        <div class="card-header">
-                            <h4>{{ titles[1] }}</h4>
-                        </div>
-                        <tbody>
-                            {{ tables[1]|safe }}
                         </tbody>
                     </table>
                 </div>

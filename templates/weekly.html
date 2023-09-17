@@ -1,5 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Weekly tables
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>weekly</title>
+        </head>
+        <body>    
+            <div>
+                <div class="card">
+                    <table>
+                        <div class="card-header">
+                            <h4>{{ titles[0] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[0]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <div class="card">
+                    <table>
+                        <div class="card-header">
+                            <h4>{{ titles[1] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[1]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <div class="card">
+                    <table>
+                        <div class="card-header">
+                            <h4>{{ titles[2] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[2]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+    </html>
 {% endblock %}

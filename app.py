@@ -21,6 +21,8 @@ league_entries = ""
 row = []
 columns = []
 entry_names = {}
+league = {}
+league_name = ""
 
 @app.route("/", methods=["GET", "POST"])
 def league_code():
@@ -61,17 +63,23 @@ def league_code():
             entry_name = items["entry_name"]
             entry_names[entry_id] = entry_name
 
+        global league
+        league = data["league"]
+
+        global league_name
+        league_name = league["name"]
+
         return redirect(url_for('home'))
     
     return render_template("league.html")
 
 @app.route("/home")
 def home():
-    return render_template('home.html',  tables=[point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Point Differentials", "Transactions"])
+    return render_template('home.html',  tables=[combined_table().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["League Table"], name=f"{league_name}")
 
 @app.route("/weekly_dashboard")
 def weekly_dash():
-    return render_template('weekly.html')
+    return render_template('weekly.html', tables=[weekly_total_points().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Week Points", "Total Weekly Trades", "Point Differentials"])
 
 def point_differential():
     league_entries = data['league_entries']
@@ -128,8 +136,8 @@ def weekly_total_points():
 
     return df
 
-def weekly_win_loss_points():
-    points_df = weekly_total_points().copy().astype(float)
+def weekly_win_loss_points_cumsum():
+    points_df = weekly_total_points().astype(float)
 
     for match in matches:
         event = match["event"]
@@ -157,6 +165,35 @@ def weekly_win_loss_points():
     points_df_cumsum = points_df.cumsum()
     return points_df_cumsum
 
+def weekly_win_loss_points():
+    points_df = weekly_total_points().astype(float)
+
+    for match in matches:
+        event = match["event"]
+        if match["finished"] == False:
+            league_entry_1 = entry_names[match["league_entry_1"]]
+            league_entry_2 = entry_names[match["league_entry_2"]]
+            points_df.at[event, league_entry_1] = np.nan
+            points_df.at[event, league_entry_2] = np.nan
+            continue
+        league_entry_1 = entry_names[match["league_entry_1"]]
+        league_entry_1_points = match["league_entry_1_points"]
+        league_entry_2 = entry_names[match["league_entry_2"]]
+        league_entry_2_points = match["league_entry_2_points"]
+        
+        if league_entry_1_points > league_entry_2_points:
+            points_df.at[event, league_entry_1] = 3
+            points_df.at[event, league_entry_2] = 0
+        elif league_entry_1_points < league_entry_2_points:
+            points_df.at[event, league_entry_1] = 0
+            points_df.at[event, league_entry_2] = 3
+        else:
+            points_df.at[event, league_entry_1] = 1
+            points_df.at[event, league_entry_2] = 1
+
+    points_df_cumsum = points_df
+    return points_df_cumsum
+
 def weekly_points_cumulative():
     weekly_total_points_df = weekly_total_points().astype(float)
     df = weekly_total_points_df.cumsum()
@@ -167,7 +204,7 @@ def weekly_points_cumulative():
     return df
 
 def total_win_loss_points():
-    points_df = weekly_total_points().copy().astype(float)
+    points_df = weekly_win_loss_points()
     win_loss_points = points_df.sum().sort_values(ascending=False)
 
     win_loss_points_df = pd.DataFrame(win_loss_points).reset_index()
@@ -216,13 +253,13 @@ def combined_table():
 
     final_df = merged_df.sort_values('Points', ascending=False)
 
-    points_df_cumsum = weekly_win_loss_points()
+    #points_df_cumsum = weekly_win_loss_points()
 
-    last_valid_index = points_df_cumsum.notna()[::-1].idxmax()
-    last_valid_column = last_valid_index.idxmax()
-    current_gw = last_valid_index[last_valid_column] 
-    final_df['Avg Gameweek Points'] = final_df['Total Points'] / current_gw
-    final_df['Avg Gameweek Points'] = final_df['Avg Gameweek Points'].round(1)
+    #last_valid_index = points_df_cumsum.notna()[::-1].idxmax()
+    #last_valid_column = last_valid_index.idxmax()
+    #current_gw = last_valid_index[last_valid_column] 
+    #final_df['Avg Gameweek Points'] = final_df['Total Points'] / current_gw
+    #final_df['Avg Gameweek Points'] = final_df['Avg Gameweek Points'].round(1)
 
     # Extract the 'Points' column and store it in a variable
     points = final_df.pop('Points')
