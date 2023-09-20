@@ -9,6 +9,7 @@ from pprint import pprint
 
 app = Flask(__name__)
 
+#Global Variables
 code = 0
 
 response = requests.get(f"https://draft.premierleague.com/api/league/{code}/details")
@@ -24,6 +25,7 @@ entry_names = {}
 league = {}
 league_name = ""
 
+#Gets league code from inital page and updates all the global variables to be specific to league
 @app.route("/", methods=["GET", "POST"])
 def league_code():
     if request.method == "POST":
@@ -73,14 +75,23 @@ def league_code():
     
     return render_template("league.html")
 
+#Home page dashboard
+#In the render template return you can add any variables to be passed into html (i.e. 'tables', 'titles')
 @app.route("/home")
 def home():
-    return render_template('home.html',  tables=[combined_table().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["League Table"], name=f"{league_name}")
+    return render_template('home.html',  tables=[combined_table().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], 
+                                         titles=["League Table"], name=f"{league_name}")
 
+#Weekly table dashboard
 @app.route("/weekly_dashboard")
 def weekly_dash():
-    return render_template('weekly.html', tables=[weekly_total_points().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_win_loss_points_cumsum().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], titles=["Weekly Points Scored", "Points Per Week", "Total Weekly Trades", "Point Differentials"])
+    return render_template('weekly.html', tables=[weekly_total_points().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), 
+                                                  weekly_win_loss_points_cumsum().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), 
+                                                  weekly_trades().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left"), 
+                                                  point_differential().to_html(classes=["table table-dark", "table-striped","table-hover"], justify="left")], 
+                                          titles=["Weekly Points Scored", "Points Per Week", "Total Weekly Trades", "Point Differentials"])
 
+#returns dataframe for player point differentials
 def point_differential():
     league_entries = data['league_entries']
     entry_names = {entry['id']: entry['entry_name'] for entry in league_entries}
@@ -101,6 +112,7 @@ def point_differential():
 
     return df
 
+#returns dataframe for each players transactions each week
 def weekly_trades():
     transactions = transaction_response.json()["transactions"]
 
@@ -120,6 +132,7 @@ def weekly_trades():
 
     return df
 
+#returns dataframe for each players total amount of points scored per week
 def weekly_total_points():
     new_columns = [entry_names[x] for x in columns]
     df = pd.DataFrame(data, columns=new_columns, index=row)
@@ -136,6 +149,7 @@ def weekly_total_points():
 
     return df
 
+#returns dataframe for each players win/loss/draw points each week added to what they already had
 def weekly_win_loss_points_cumsum():
     points_df = weekly_total_points().astype(float)
 
@@ -165,6 +179,7 @@ def weekly_win_loss_points_cumsum():
     points_df_cumsum = points_df.cumsum()
     return points_df_cumsum
 
+#returns dataframe for each players win/loss/draw points each week
 def weekly_win_loss_points():
     points_df = weekly_total_points().astype(float)
 
@@ -194,6 +209,7 @@ def weekly_win_loss_points():
     points_df_cumsum = points_df
     return points_df_cumsum
 
+#returns dataframe for each players total points their players have scored
 def weekly_points_cumulative():
     weekly_total_points_df = weekly_total_points().astype(float)
     df = weekly_total_points_df.cumsum()
@@ -203,6 +219,7 @@ def weekly_points_cumulative():
 
     return df
 
+#returns dataframe for each players total win/loss/draw points
 def total_win_loss_points():
     points_df = weekly_win_loss_points()
     win_loss_points = points_df.sum().sort_values(ascending=False)
@@ -212,6 +229,7 @@ def total_win_loss_points():
 
     return win_loss_points_df
 
+#returns dataframe for each players total points scored so far in the season
 def total_cumulative_points():
     total_points = weekly_total_points().sum().sort_values(ascending=False)
 
@@ -220,6 +238,7 @@ def total_cumulative_points():
 
     return total_points_df
 
+#returns dataframe for each players total transactions
 def total_trades():
     total_transactions = weekly_trades().sum().sort_values(ascending=False)
 
@@ -228,6 +247,7 @@ def total_trades():
 
     return trades_df
 
+#returns dataframe for each players initial pick position
 def pick_order():
     fixture_list = choices_response
 
@@ -243,6 +263,7 @@ def pick_order():
 
     return pick_order_df
 
+#returns a combined dataframe displaying Team name, pick position, W/L points, Total Points scored, Total Transactions, Point difference
 def combined_table():
     # Merge total_points_df with leaderboard_df on 'Team' column
     merged_df = total_cumulative_points().merge(total_win_loss_points(), on='Team')
