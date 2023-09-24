@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% block content %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+  </head>
+  <body>
+    <h1 style="text-align: center">
+      <form action="/player_search" method="POST">
+        <input type="text" name="player_name"
+        placeholder="Enter a player name!"
+        value="{{ request.form['player_name']}}"></input>
+      </form>
+      <h1>{{player_name}}</h1>
+      <p style="font-size:30px">{{player_info}}</p>
+      <p style="font-size:20px;">{{owner_info}}</p>
+      <br/>    
+      <div>
+          <div class="card">
+              <table>
+                  <div class="card-header">
+                      <h4>{{ title }}</h4>
+                  </div>
+                  <tbody>
+                      {{ player_history|safe }}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </h1>
+  </body>
+</html>
+{% endblock %}
