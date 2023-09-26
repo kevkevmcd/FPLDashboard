@@ -16,9 +16,10 @@
       <p style="font-size:20px;">{{owner_info}}</p>
       <br/>    
       <div>
+        {% if player_name != "" %}
           <div class="card">
               <table>
-                  <div class="card-header">
+                  <div class="card-header text-bg-info mb-3">
                       <h4>{{ title }}</h4>
                   </div>
                   <tbody>
@@ -26,6 +27,7 @@
                   </tbody>
               </table>
           </div>
+        {% endif %}
       </div>
     </h1>
   </body>

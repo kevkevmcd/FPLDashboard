@@ -118,6 +118,13 @@ def league_code():
 
     return render_template("league.html")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("500.html"), 500
 
 # Home page dashboard
 # In the render template return you can add any variables to be passed into html (i.e. 'tables', 'titles')
