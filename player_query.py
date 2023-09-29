@@ -1,5 +1,4 @@
 import pandas as pd
-import app
 import util
 import requests
 
@@ -10,7 +9,7 @@ def get_player_name(player_name):
     player_name_lower = player_name.lower()
     # TODO(mgribbins567): Add handling for player's with annoying letters, and searching using non-web_name (first/last/nickname).
     # TODO(mgribbins567): Stretch goal: add best-guess search for misspellings etc.
-    for i in app.static_elements.json()["elements"]:
+    for i in util.get_static_elements():
         if util.match_player_name(player_name_lower, i):
             return i["first_name"] + " " + i["second_name"]
     return ""
@@ -20,7 +19,7 @@ def get_player_name(player_name):
 def get_player_info(player_name):
     # TODO: Might want to call get_player_name or another util to use ID based matching once we implement better searching.
     player_name_lower = player_name.lower()
-    for i in app.static_elements.json()["elements"]:
+    for i in util.get_static_elements():
         if util.match_player_name(player_name_lower, i):
             player_position = i["element_type"]
             player_team = i["team"]
