@@ -6,7 +6,8 @@ from player_query import (
     get_player_history,
 )
 from util import(
-    get_league_name
+    get_league_name,
+    get_manager_name_without_comma
 )
 from league_dataframes import(
     combined_table,
@@ -15,7 +16,12 @@ from league_dataframes import(
     weekly_trades,
     weekly_win_loss_points_cumsum
 )
+from squad_query import(
+    get_manager_id,
+    get_squad_info
+)
 import os
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -30,7 +36,6 @@ def league_code():
         leagueCode = int(request.form["leagueCode"])
         global code
         code = leagueCode
-        print(f"{code}")
 
         if code == 0:
             flash("Please Enter a League Code!")
@@ -129,6 +134,40 @@ def player_search():
         ),
         title=title,
     )
+
+@app.route("/manager_search", methods=["GET", "POST"])
+def manager_search():
+        # Initialize variables so that GET method has default values to pass to player_search.html
+    team_name = ""
+    manager_name = ""
+    manager_id = 0
+    title = ""
+    squad = pd.DataFrame()
+    classes = []
+    if request.method == "POST":
+        # If get_player_name fails, it will return an empty string (for now).
+        team_name = request.form["team_name"]
+        manager_id = get_manager_id(team_name)
+
+        if manager_id == 0:
+            team_name = "Team not found"
+        else:
+            manager_name = get_manager_name_without_comma(manager_id)
+            squad = get_squad_info(manager_id)     
+            title = "Team"
+            classes = ["table table-dark", "table-striped", "table-hover"]
+    return render_template(
+        "manager_search.html",
+        team_name=team_name,
+        manager_name=manager_name,
+        squad=squad.to_html(
+            classes=classes,
+            justify="left",
+            index=False,
+        ),
+        title=title,
+    )
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -209,14 +209,6 @@ def combined_table():
 
     final_df = merged_df.sort_values("Points", ascending=False)
 
-    # points_df_cumsum = weekly_win_loss_points()
-
-    # last_valid_index = points_df_cumsum.notna()[::-1].idxmax()
-    # last_valid_column = last_valid_index.idxmax()
-    # current_gw = last_valid_index[last_valid_column]
-    # final_df['Avg Gameweek Points'] = final_df['Total Points'] / current_gw
-    # final_df['Avg Gameweek Points'] = final_df['Avg Gameweek Points'].round(1)
-
     # Extract the 'Points' column and store it in a variable
     points = final_df.pop("Points")
 
@@ -229,3 +221,31 @@ def combined_table():
     FINALFINAL_DF = FINALFINAL_DF.reset_index().drop("index", axis=1)
 
     return FINALFINAL_DF
+
+# def premier_league_fixtures():
+#     fixtures = util.get_this_weeks_fixtures_response().json()
+#     teams = util.get_team_names()
+#     matches = {}
+#     home_teams = []
+#     away_teams = []
+#     index = []
+
+#     for fixture in fixtures:
+#         for team in teams:
+#             if team["id"] == fixture["team_h"]:
+#                 fixture["team_h"] = team["name"]
+#                 home_team = fixture["team_h"]
+#             elif team["id"] == fixture["team_a"]:
+#                 fixture["team_a"] = team["name"]
+#                 away_team = fixture["team_a"]
+#         home_teams.append(home_team)
+#         away_teams.append(away_team)
+
+#         index.append("")
+
+#     matches["Home"] = home_teams
+#     matches["Away"] = away_teams
+
+#     df = pd.DataFrame(matches, index=index)
+
+#     return df

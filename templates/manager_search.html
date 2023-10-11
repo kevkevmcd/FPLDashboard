@@ -1,0 +1,34 @@
+{% extends 'base.html' %} {% block content %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+  </head>
+  <body>
+    <h1 style="text-align: center">
+      <form action="/manager_search" method="POST">
+        <input type="text" name="team_name"
+        placeholder="Enter a team name!"
+        value="{{ request.form['team_name']}}"></input>
+      </form>
+      <h1>{{team_name}}</h1>
+      <p style="font-size:20px;">{{manager_name}}</p>
+      <br/>    
+      <div>
+        {% if team_name != ""%}
+          <div class="card">
+              <table>
+                  <div class="card-header text-bg-info mb-3">
+                      <h4>{{ title }}</h4>
+                  </div>
+                  <tbody>
+                      {{ squad|safe }}
+                  </tbody>
+              </table>
+          </div>
+        {% endif %}
+      </div>
+    </h1>
+  </body>
+</html>
+{% endblock %}

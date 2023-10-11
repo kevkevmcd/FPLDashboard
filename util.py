@@ -74,6 +74,7 @@ def get_league_code():
     league_code = int(app.code)
     return league_code
 
+#responses
 def get_details_response():
     league_code = get_league_code()
     response = requests.get(
@@ -105,6 +106,13 @@ def get_static_elements_response():
 
     return response
 
+def get_this_weeks_fixtures_response():
+    response = requests.get(
+        "https://fantasy.premierleague.com/api/fixtures?future=1"
+    )
+
+    return response
+
 def get_element_status_response():
     league_code = get_league_code()
     response = requests.get(
@@ -113,6 +121,7 @@ def get_element_status_response():
 
     return response
 
+#Specific data from responses
 def get_matches():
     response = get_details_response().json()
     matches = response["matches"]
@@ -161,6 +170,13 @@ def get_static_elements():
     
     return elements
 
+def get_teams():
+    response = get_static_elements_response().json()
+    teams = response["teams"]
+
+    return teams
+
+#Other commonly used methods
 def get_columns():
     columns = []
     league_entries = get_league_entries()
@@ -186,3 +202,34 @@ def get_entry_names():
         entry_names[entry_id] = entry_name
     
     return entry_names
+
+# def get_team_names():
+#     team_names = {}
+#     teams = get_teams()
+
+#     for team in teams:
+#         team_id = team["id"]
+#         team_name = team["name"]
+#         team_names[team_id] = team_name
+
+#     return team_names
+
+#player squad methods
+def get_manager_squad(manager_id):
+    response = get_element_status_response().json()["element_status"]
+    squad = []
+
+    for element in response:
+        if element["owner"] == manager_id:
+            player = element["element"]
+            squad.append(player)
+
+    return squad
+
+#This is just temporary, I will get rid of this when I don't feel like being lazy
+def get_manager_name_without_comma(id):
+    for i in get_league_entries():
+        if id == i["entry_id"]:
+            return i["player_first_name"] + " " + i["player_last_name"]
+    return ""
+
