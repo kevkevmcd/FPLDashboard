@@ -4,31 +4,67 @@
   <head>
     <title>Home</title>
   </head>
-  <body>
-    <h1 style="text-align: center">
+  <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <h3 class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white">Team Info</h3>
+    <div class="input-group justify-content-center">
+      <span class="input-group-text" id="basic-addon1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </span>
       <form action="/manager_search" method="POST">
-        <input type="text" name="team_name"
-        placeholder="Enter a team name!"
+        <input type="text" class="form-control" name="team_name"
+        placeholder="Enter a team name!" aria-describedby="basic-addon1"
         value="{{ request.form['team_name']}}"></input>
       </form>
-      <h1>{{team_name}}</h1>
-      <p style="font-size:20px;">{{manager_name}}</p>
-      <br/>    
-      <div>
-        {% if team_name != ""%}
-          <div class="card">
-              <table>
-                  <div class="card-header text-bg-info mb-3">
-                      <h4>{{ title }}</h4>
-                  </div>
-                  <tbody>
-                      {{ squad|safe }}
-                  </tbody>
-              </table>
+    </div>
+  </header>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
+          <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="sidebarMenuLabel">Team Info</h5>
+            </div>
+            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+              <div class="nav flex-column">
+                <div class="nav-item shadow">
+                  <a class="nav-link d-flex align-items-center gap-2 active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                    </svg>
+                    {{team_name}}
+                  </a>
+                </div>
+                <div class="nav-item shadow">
+                  <a class="nav-link d-flex align-items-center gap-2 active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    </svg>
+                    {{manager_name}}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-        {% endif %}
+        </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h2>{{ title }}</h2>
+          </div>
+          {% if team_name != ""%}
+            <div class="table-responsive small shadow">
+              <table>
+                <tbody>
+                  {{ squad|safe }}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+        </main>
       </div>
-    </h1>
+    </div>
   </body>
 </html>
 {% endblock %}

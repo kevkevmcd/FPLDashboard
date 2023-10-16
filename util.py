@@ -70,6 +70,30 @@ def match_player_name(player_name_input, elements):
         return True
     return False
 
+#player squad methods
+def get_manager_squad(manager_id):
+    response = get_element_status_response().json()["element_status"]
+    squad = []
+
+    for element in response:
+        if element["owner"] == manager_id:
+            player = element["element"]
+            squad.append(player)
+
+    return squad
+
+#This is just temporary, I will get rid of this when I don't feel like being lazy
+def get_manager_name_without_comma(id):
+    for i in get_league_entries():
+        if id == i["entry_id"]:
+            return i["player_first_name"] + " " + i["player_last_name"]
+    return ""
+
+def match_team_name(team_name_input, entries):
+    if (team_name_input == entries["entry_name"].lower()):
+        return True
+    return False
+
 def get_league_code():
     league_code = int(app.code)
     return league_code
@@ -214,22 +238,13 @@ def get_entry_names():
 
 #     return team_names
 
-#player squad methods
-def get_manager_squad(manager_id):
-    response = get_element_status_response().json()["element_status"]
-    squad = []
+def get_league_team_names():
+    entries = get_league_entries()
+    teams = []
+    team = ""
 
-    for element in response:
-        if element["owner"] == manager_id:
-            player = element["element"]
-            squad.append(player)
-
-    return squad
-
-#This is just temporary, I will get rid of this when I don't feel like being lazy
-def get_manager_name_without_comma(id):
-    for i in get_league_entries():
-        if id == i["entry_id"]:
-            return i["player_first_name"] + " " + i["player_last_name"]
-    return ""
-
+    for entry in entries:
+        team = entry["entry_name"]
+        teams.append(team)
+    
+    return teams

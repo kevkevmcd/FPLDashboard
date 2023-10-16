@@ -12,6 +12,13 @@ def get_manager_id(manager_name):
     
     return manager_id
 
+def get_team_name(team_name):
+    team_name_lower = team_name.lower()
+    for i in util.get_league_entries():
+        if util.match_team_name(team_name_lower, i):
+            return i["entry_name"]
+    return ""
+
 def get_player_totals(player_id):
     elements = util.get_static_elements()
     df = pd.DataFrame()
