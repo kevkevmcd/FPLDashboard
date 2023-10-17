@@ -227,16 +227,21 @@ def get_entry_names():
     
     return entry_names
 
-# def get_team_names():
-#     team_names = {}
-#     teams = get_teams()
+def get_team_name(team_id):
+    team_name = ""
+    teams = get_teams()
 
-#     for team in teams:
-#         team_id = team["id"]
-#         team_name = team["name"]
-#         team_names[team_id] = team_name
+    for team in teams:
+        if team["id"] == team_id:
+            team_name = team["name"]
 
-#     return team_names
+    return team_name
+
+def get_upcoming_gameweek(fixtures):
+    fixture = fixtures[0]
+    event = fixture["event"]
+
+    return event
 
 def get_league_team_names():
     entries = get_league_entries()

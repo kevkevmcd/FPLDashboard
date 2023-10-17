@@ -222,30 +222,28 @@ def combined_table():
 
     return FINALFINAL_DF
 
-# def premier_league_fixtures():
-#     fixtures = util.get_this_weeks_fixtures_response().json()
-#     teams = util.get_team_names()
-#     matches = {}
-#     home_teams = []
-#     away_teams = []
-#     index = []
+def premier_league_fixtures():
+    fixtures = util.get_this_weeks_fixtures_response().json()
+    matches = {}
+    home_teams = []
+    away_teams = []
+    index = []
+    upcoming_gameweek = util.get_upcoming_gameweek(fixtures)
 
-#     for fixture in fixtures:
-#         for team in teams:
-#             if team["id"] == fixture["team_h"]:
-#                 fixture["team_h"] = team["name"]
-#                 home_team = fixture["team_h"]
-#             elif team["id"] == fixture["team_a"]:
-#                 fixture["team_a"] = team["name"]
-#                 away_team = fixture["team_a"]
-#         home_teams.append(home_team)
-#         away_teams.append(away_team)
+    for fixture in fixtures:
+        if fixture["event"] != upcoming_gameweek:
+            break
+        else:
+            home_team = util.get_team_name(fixture["team_h"])
+            away_team = util.get_team_name(fixture["team_a"])
+            home_teams.append(home_team)
+            away_teams.append(away_team)
 
-#         index.append("")
+            index.append("")
 
-#     matches["Home"] = home_teams
-#     matches["Away"] = away_teams
+    matches["Home"] = home_teams
+    matches["Away"] = away_teams
 
-#     df = pd.DataFrame(matches, index=index)
+    df = pd.DataFrame(matches, index=index)
 
-#     return df
+    return df

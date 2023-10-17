@@ -15,7 +15,8 @@ from league_dataframes import(
     point_differential,
     weekly_total_points,
     weekly_trades,
-    weekly_win_loss_points_cumsum
+    weekly_win_loss_points_cumsum,
+    premier_league_fixtures
 )
 from squad_query import(
     get_manager_id,
@@ -66,9 +67,13 @@ def home():
             combined_table().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
                 justify="left",
+            ),
+            premier_league_fixtures().to_html(
+                classes=["table table-dark", "table-striped", "table-hover"],
+                justify="left",
             )
         ],
-        titles=["League Table"],
+        titles=["League Table", "Premier League Fixtures"],
         name=f"{league_name}",
     )
 
