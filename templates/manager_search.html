@@ -8,18 +8,7 @@
   </head>
   <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <h3 class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white">Team Info</h3>
-    <div class="input-group justify-content-center">
-      <span class="input-group-text" id="basic-addon1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-        </svg>
-      </span>
-      <form action="/manager_search" method="POST" onsubmit="showLoading()">
-        <input type="text" class="form-control" name="team_name"
-        placeholder="Enter a team name!" aria-describedby="basic-addon1"
-        value="{{ request.form['team_name']}}"></input>
-      </form>
-    </div>
+    <h2 class="input-group justify-content-center">{{team_name}}</h2>
   </header>
   <body>
     <div class="container-fluid">
@@ -66,10 +55,6 @@
           {% endif %}
         </main>
       </div>
-    </div>
-    <div id="loading-spinner" class="loading-spinner">
-      <div class="spinner"></div>
-      <p id="loading-text" class="loading-text">Searching for team...</p>
     </div>
   </body>
 </html>

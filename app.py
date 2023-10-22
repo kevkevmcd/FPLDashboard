@@ -1,4 +1,5 @@
 from flask import Flask, flash, render_template, request, redirect, url_for
+from flask_caching import Cache
 from player_query import (
     get_player_info,
     get_player_name,
@@ -8,7 +9,7 @@ from player_query import (
 from util import(
     get_league_name,
     get_manager_name_without_comma,
-    get_league_team_names
+    get_league_team_names,
 )
 from league_dataframes import(
     combined_table,
@@ -26,7 +27,16 @@ from squad_query import(
 import os
 import pandas as pd
 
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 600
+}
+
 app = Flask(__name__)
+
+app.config.from_mapping(config)
+cache = Cache(app)
 
 SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -35,6 +45,9 @@ code = 0
 # Gets league code from inital page and updates all the global variables to be specific to league
 @app.route("/", methods=["GET", "POST"])
 def league_code():
+    with app.app_context():
+        cache.clear()
+
     if request.method == "POST":
         leagueCode = int(request.form["leagueCode"])
         global code
@@ -58,6 +71,7 @@ def page_not_found(e):
 # Home page dashboard
 # In the render template return you can add any variables to be passed into html (i.e. 'tables', 'titles')
 @app.route("/home")
+@cache.cached(timeout=600)
 def home():
     league_name = get_league_name()
 
@@ -67,6 +81,7 @@ def home():
             combined_table().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
                 justify="left",
+                escape=False,
             ),
             premier_league_fixtures().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
@@ -142,25 +157,25 @@ def player_search():
         title=title,
     )
 
-@app.route("/manager_search", methods=["GET", "POST"])
-def manager_search():
+@app.route("/manager_search/<name>", methods=["POST"])
+@cache.cached(timeout=600)
+def manager_search(name):
     team_name = ""
     manager_name = ""
     manager_id = 0
     title = ""
     squad = pd.DataFrame()
     classes = []
-    if request.method == "POST":
-        team_name = get_team_name(request.form["team_name"])
-        manager_id = get_manager_id(team_name)
+    team_name = get_team_name(name)
+    manager_id = get_manager_id(team_name)
 
-        if team_name == "":
-            team_name = "Team not found"
-        else:
-            manager_name = get_manager_name_without_comma(manager_id)
-            squad = get_squad_info(manager_id)     
-            title = "Team"
-            classes = ["table table-dark", "table-striped", "table-hover", "table-sm"]
+    if team_name == "":
+        team_name = "Team not found"
+    else:
+        manager_name = get_manager_name_without_comma(manager_id)
+        squad = get_squad_info(manager_id)     
+        title = "Team"
+        classes = ["table table-dark", "table-striped", "table-hover", "table-sm"]
     return render_template(
         "manager_search.html",
         team_name=team_name,

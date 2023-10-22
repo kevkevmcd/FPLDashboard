@@ -217,6 +217,7 @@ def combined_table():
     final_df = final_df.set_index(pd.Index(np.arange(1, len(final_df) + 1)))
 
     FINALFINAL_DF = pd.merge(pick_order(), final_df, on="Team")
+    FINALFINAL_DF[""] = FINALFINAL_DF["Team"].apply(util.make_team_name_link)
     FINALFINAL_DF = FINALFINAL_DF.sort_values(by="Points", ascending=False)
     FINALFINAL_DF = FINALFINAL_DF.reset_index().drop("index", axis=1)
 

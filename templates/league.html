@@ -44,7 +44,9 @@
   </section>
   <div id="loading-spinner" class="loading-spinner">
     <div class="spinner"></div>
-    <p id="loading-text" class="loading-text">Please wait while we collect your league data...</p>
+    <p id="loading-text" class="loading-text">
+      <script>document.write(getRandomLoadingMessage());</script>
+    </p>
   </div>
 </body>
 </html>
