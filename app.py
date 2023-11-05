@@ -71,7 +71,7 @@ def page_not_found(e):
 # Home page dashboard
 # In the render template return you can add any variables to be passed into html (i.e. 'tables', 'titles')
 @app.route("/home")
-@cache.cached(timeout=600)
+@cache.cached(timeout=1000)
 def home():
     league_name = get_league_name()
 

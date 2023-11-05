@@ -1,38 +1,117 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <title>Home</title>
-            <link rel="stylesheet" type="text/css" href="static/css/site.css">
-            <script src="static/js/script.js"></script>
-        </head>
-        <body>
-            <h1 style="text-align: center">{{ name }}</h1>
-            <br/>    
-            <div>
-                <div class="card">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="static/css/site.css">
+    <script src="static/js/script.js"></script>
+</head>
+<body>
+    <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white">
+        </a>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
+                <!-- Left Sidebar Content -->
+                <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="leftSidebarMenu" aria-labelledby="leftSidebarMenuLabel">
+                    <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> dashboard </font>
+                                    </font>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> weekly </font>
+                                    </font>
+                                </a>
+                            </li>
+                        </ul>
+                        <hr class="my-3">
+                        <ul class="nav flex-column mb-auto">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> other </font>
+                                    </font>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <main class="col-md-6 col-lg-8 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="justify-content-center">
+                        {{ name }}
+                    </h1>
+                </div>
+                <div class="table-responsive small shadow">
                     <table>
-                        <div class="card-header text-bg-info mb-3">
-                            <h4>{{ titles[0] }}</h4>
-                        </div>
                         <tbody>
                             {{ tables[0]|safe }}
                         </tbody>
                     </table>
                 </div>
-                <div class="card">
-                    <table>
-                        <div class="card-header text-bg-info mb-3">
-                            <h4>{{ titles[1] }}</h4>
+                <br>
+            </main>
+            <div class="sidebar border border-left col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
+                <!-- Right Sidebar Content -->
+                <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="rightSidebarMenu" aria-labelledby="rightSidebarMenuLabel">
+                    <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                        <!-- Table in the right sidebar -->
+                        <h5>
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;"> {{ titles[1] }} </font>
+                            </font>
+                        </h5>
+                        <div class="table-responsive small shadow">
+                            <table>
+                                <tbody>
+                                    {{ tables[1]|safe }}
+                                </tbody>
+                            </table>
                         </div>
-                        <tbody>
-                            {{ tables[1]|safe }}
-                        </tbody>
-                    </table>
+                        <hr class="my-3">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> dashboard </font>
+                                    </font>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> weekly </font>
+                                    </font>
+                                </a>
+                            </li>
+                        </ul>
+                        <hr class="my-3">
+                        <ul class="nav flex-column mb-auto">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> other </font>
+                                    </font>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </body>
-    </html>
+        </div>
+    </div>
+</body>
+</html>
 {% endblock %}
