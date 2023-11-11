@@ -88,7 +88,7 @@ def home():
                 justify="left",
             )
         ],
-        titles=["League Table", "Premier League Fixtures"],
+        titles=["League Table", "Upcoming Fixtures"],
         name=f"{league_name}",
     )
 
