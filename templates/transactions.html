@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Transaction History</title>
+        </head>
+        <body>    
+            <div>
+                <div class="card">
+                    <table>
+                        <div class="card-header text-bg-info mb-3">
+                            <h4>{{ titles[0] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[0]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <div class="card">
+                    <table>
+                        <div class="card-header text-bg-info mb-3">
+                            <h4>{{ titles[1] }}</h4>
+                        </div>
+                        <tbody>
+                            {{ tables[1]|safe }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+    </html>
+{% endblock %}

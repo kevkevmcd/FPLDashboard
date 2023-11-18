@@ -24,6 +24,11 @@ from squad_query import(
     get_squad_info,
     get_team_name
 )
+from trades import(
+    net_points_trades,
+    trade_tracker,
+    players_history
+)
 import os
 import pandas as pd
 
@@ -121,6 +126,26 @@ def weekly_dash():
             "Points Per Week",
             "Total Weekly Trades",
             "Point Differentials",
+        ],
+    )
+
+@app.route("/transaction_history")
+def transactions_dash():
+    return render_template(
+        "transactions.html",
+        tables=[
+            trade_tracker().to_html(
+                classes=["table table-dark", "table-striped", "table-hover"],
+                justify="left",
+            ),
+           net_points_trades().to_html(
+                classes=["table table-dark", "table-striped", "table-hover"],
+                justify="left",
+            )
+        ],
+        titles=[
+            "Trade Tracker",
+            "Net Points Trades",
         ],
     )
 

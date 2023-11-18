@@ -145,6 +145,16 @@ def get_element_status_response():
 
     return response
 
+def get_live_gameweek_response(gameweek):
+    response = requests.get(f"https://draft.premierleague.com/api/event/{gameweek}/live")
+
+    return response
+
+def get_team_details_response(gameweek, team_id):
+    response = requests.get(f"https://draft.premierleague.com/api/entry/{team_id}/event/{gameweek}")
+
+    return response
+
 #Specific data from responses
 def get_matches():
     response = get_details_response().json()
