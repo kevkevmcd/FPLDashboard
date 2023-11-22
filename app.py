@@ -26,7 +26,7 @@ from squad_query import(
 )
 from trades import(
     net_points_trades,
-    trade_tracker,
+    find_trades,
     players_history
 )
 import os
@@ -134,7 +134,7 @@ def transactions_dash():
     return render_template(
         "transactions.html",
         tables=[
-            trade_tracker().to_html(
+            find_trades().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
                 justify="left",
             ),

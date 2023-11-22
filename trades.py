@@ -12,8 +12,9 @@ def players_history():
     all_gameweeks_data = []
 
     # Loop through all 36 gameweeks
-    for gw in range(1, 2):
-        live_data = util.get_live_gameweek_response(gw).json()
+    for gw in range(1, 5):
+        live_data_response = util.get_live_gameweek_response(gw)
+        live_data = live_data_response.json()
 
         # If live data for the gameweek is not available, we continue with an empty dict
         player_points = {}
@@ -27,7 +28,8 @@ def players_history():
             owner = team['player_first_name']
 
             # Fetch team-specific player details for the current gameweek
-            team_details = util.get_team_details_response(gw, team_id).json()
+            team_details_response = util.get_team_details_response(gw, team_id)
+            team_details = team_details_response.json()
 
             if team_details and 'picks' in team_details:
                 for pick in team_details['picks']:
@@ -51,12 +53,15 @@ def players_history():
     # Creating the DataFrame
     df = pd.DataFrame(all_gameweeks_data)
 
+    print(df.columns)
+    print(df.head())
+
     # Now, 'df' contains the player names, their respective teams, the gameweek, and the points they scored in that gameweek
     return df
 
-def find_trades(df):
+def find_trades():
     # First sort the DataFrame by 'Team Name' and 'Gameweek' for sequential access
-    df_sorted = df.sort_values(by=['Team Name', 'Gameweek'])
+    df_sorted = players_history().sort_values(by=['Team Name', 'Gameweek'])
 
     # A dictionary to hold players for each team and gameweek
     team_gw_players = {team: {} for team in df_sorted['Team Name'].unique()}
@@ -119,15 +124,20 @@ def find_trades(df):
                         })
 
     trades_df = pd.DataFrame(trades_list)
-    return trades_df
+    tradetracker_df = trades_df.drop_duplicates()
 
-def trade_tracker():
-    # Use the function to find trades
-    tradetracker_df = find_trades(players_history())
-    #remove duplicates 
-    tradetracker_df = tradetracker_df.drop_duplicates()
+    print(tradetracker_df.columns)
+    print(tradetracker_df.head())
 
     return tradetracker_df
+
+# def trade_tracker():
+#     # Use the function to find trades
+#     tradetracker_df = find_trades(players_history())
+#     #remove duplicates 
+#     tradetracker_df = tradetracker_df.drop_duplicates()
+
+#     return tradetracker_df
 
 def sum_points_from_gameweek(player_name, start_gameweek):
     player_points = players_history()[(players_history()['Player Name'] == player_name) & (players_history()['Gameweek'] >= start_gameweek)]['Points']
@@ -138,9 +148,9 @@ def net_points_trades():
     trade_values = []
 
     # Iterate over each unique trade ID.
-    for trade_id in trade_tracker()['Trade ID'].unique():
+    for trade_id in find_trades()['Trade ID'].unique():
         # Get all trades with the same Trade ID.
-        trades = trade_tracker()[trade_tracker()['Trade ID'] == trade_id]
+        trades = find_trades()[find_trades()['Trade ID'] == trade_id]
         
         # Get the gameweek of the trade.
         gameweek_of_trade = trades.iloc[0]['Gameweek']
@@ -158,7 +168,7 @@ def net_points_trades():
             # Calculate net points and add to the list.
             net_points = received_points - given_points
             trade_values.append({
-                'TradeID': trade_id,
+                'Trade ID': trade_id,
                 'Owner': owner,
                 'Total points': net_points
             })
