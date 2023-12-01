@@ -1,5 +1,5 @@
 <body>
-  <nav class="navbar navbar-expand-lg shadow">
+  <nav class="navbar navbar-expand-lg bg-primary shadow">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('home') }}">
         <img src="static/prem-logo.png" alt="FPL" width="40" height="40">
@@ -18,25 +18,25 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+            <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('weekly_dash') }}"
+            <a class="nav-link active" href="{{ url_for('weekly_dash') }}"
               >Weekly Tables</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('player_search')}}"
+            <a class="nav-link active" href="{{ url_for('player_search')}}"
               >Player Search</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="https://www.premierleague.com/"
+            <a class="nav-link active" href="https://www.premierleague.com/"
               >Premier League Website</a
             >
           </li>
         </ul>
-          <button class="btn btn-outline-danger">
+          <button class="btn btn-danger">
             <a class="nav-link" href="{{ url_for('league_code')}}"
               >League Code</a
             >
