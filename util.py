@@ -155,6 +155,41 @@ def get_team_details_response(gameweek, team_id):
 
     return response
 
+def get_player_picture(code):
+    response = requests.get(f"https://resources.premierleague.com/premierleague/photos/players/110x140/{code}.png")
+
+    return response
+
+def get_club_picture(code):
+    response = requests.get(f"https://resources.premierleague.com/premierleague/badges/{code}.png")
+
+    return response
+
+def get_current_event_response():
+    response = requests.get("https://draft.premierleague.com/api/game")
+
+    return response
+
+def get_current_gameweek():
+    response = get_current_event_response().json()
+    current_event = response["current_event"]
+
+    return current_event
+
+def get_upcoming_gameweek():
+    response = get_current_event_response().json()
+    week = None
+
+    if response["current_event_finished"] != True:
+        current_week = response["current_event"]
+        week = current_week
+    
+    if response["current_event_finished"] == True:
+        upcoming_gameweek = response["next_event"]
+        week = upcoming_gameweek
+    
+    return week
+    
 #Specific data from responses
 def get_matches():
     response = get_details_response().json()
@@ -222,7 +257,7 @@ def get_columns():
 
 def get_rows():
     row = []
-    row = [x + 1 for x in range(38)]
+    row = [x + 1 for x in range(get_current_gameweek())]
 
     return row
 
@@ -246,12 +281,6 @@ def get_team_name(team_id):
             team_name = team["name"]
 
     return team_name
-
-def get_upcoming_gameweek(fixtures):
-    fixture = fixtures[0]
-    event = fixture["event"]
-
-    return event
 
 def get_league_team_names():
     entries = get_league_entries()

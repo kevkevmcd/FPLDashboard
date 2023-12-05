@@ -214,7 +214,7 @@ def combined_table():
 
     # Insert the 'Points' column before the 'Total Points' column
     final_df.insert(final_df.columns.get_loc("Total Points"), "Points", points)
-    final_df = final_df.set_index(pd.Index(np.arange(1, len(final_df) + 1)))
+    final_df.index = np.arange(1, len(final_df) + 1)
 
     FINALFINAL_DF = pd.merge(pick_order(), final_df, on="Team")
     FINALFINAL_DF[""] = FINALFINAL_DF["Team"].apply(util.make_team_name_link)
@@ -229,7 +229,7 @@ def premier_league_fixtures():
     home_teams = []
     away_teams = []
     index = []
-    upcoming_gameweek = util.get_upcoming_gameweek(fixtures)
+    upcoming_gameweek = util.get_upcoming_gameweek()
 
     for fixture in fixtures:
         if fixture["event"] != upcoming_gameweek:
