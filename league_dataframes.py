@@ -32,7 +32,7 @@ def weekly_trades():
 
     teams = {entry["entry_id"]: entry["entry_name"] for entry in league_entries}
     columns = list(teams.values())
-    index = [x + 1 for x in range(38)]
+    index = [x + 1 for x in range(util.get_rows())]
     df = pd.DataFrame(0, columns=columns, index=index)
 
     for transaction in transactions:
@@ -52,7 +52,7 @@ def weekly_total_points():
     response = util.get_details_response().json()
     entry_names = util.get_entry_names()
     columns = util.get_columns()
-    row = [x + 1 for x in range(38)]
+    row = [x + 1 for x in range(util.get_rows())]
     matches = util.get_matches()
 
     new_columns = [entry_names[x] for x in columns]
@@ -246,5 +246,38 @@ def premier_league_fixtures():
     matches["Away"] = away_teams
 
     df = pd.DataFrame(matches, index=index)
+
+    return df
+
+def league_fixtures():
+    matches = util.get_matches()
+    gameweek = util.get_upcoming_gameweek()
+    home_teams = []
+    home_scores = []
+    away_teams = []
+    away_scores = []
+    index = []
+    fixtures = {}
+
+    for match in matches:
+        if match["event"] == gameweek:
+            home_team = util.get_manager_team_name_for_fixtures(match["league_entry_1"])
+            home_score = match["league_entry_1_points"]
+            away_team = util.get_manager_team_name_for_fixtures(match["league_entry_2"])
+            away_score = match["league_entry_2_points"]
+
+            home_teams.append(home_team)
+            away_teams.append(away_team)
+            home_scores.append(home_score)
+            away_scores.append(away_score)
+
+            index.append("")
+        
+    fixtures["Home"] = home_teams
+    fixtures["Home Points"] = home_scores
+    fixtures["Away Points"] = away_scores
+    fixtures["Away"] = away_teams
+
+    df = pd.DataFrame(fixtures, index=index)
 
     return df

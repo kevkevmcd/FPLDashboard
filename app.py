@@ -10,6 +10,7 @@ from util import(
     get_league_name,
     get_manager_name_without_comma,
     get_league_team_names,
+    get_upcoming_gameweek,
 )
 from league_dataframes import(
     combined_table,
@@ -17,7 +18,8 @@ from league_dataframes import(
     weekly_total_points,
     weekly_trades,
     weekly_win_loss_points_cumsum,
-    premier_league_fixtures
+    premier_league_fixtures,
+    league_fixtures
 )
 from squad_query import(
     get_manager_id,
@@ -79,6 +81,7 @@ def page_not_found(e):
 @cache.cached(timeout=1000)
 def home():
     league_name = get_league_name()
+    gameweek = get_upcoming_gameweek()
 
     return render_template(
         "home.html",
@@ -91,10 +94,15 @@ def home():
             premier_league_fixtures().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
                 justify="left",
-            )
+            ),
+            league_fixtures().to_html(
+                classes=["table table-dark", "table-striped", "table-hover"],
+                justify="left",
+            ),
         ],
-        titles=["League Table", "Premier League Fixtures"],
+        titles=["League Table", "Premier League Fixtures", "League Fixtures"],
         name=f"{league_name}",
+        week=f"{gameweek}",
     )
 
 
