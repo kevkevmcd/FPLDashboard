@@ -32,7 +32,7 @@ def weekly_trades():
 
     teams = {entry["entry_id"]: entry["entry_name"] for entry in league_entries}
     columns = list(teams.values())
-    index = [x + 1 for x in range(util.get_rows())]
+    index = util.get_rows()
     df = pd.DataFrame(0, columns=columns, index=index)
 
     for transaction in transactions:
@@ -52,7 +52,7 @@ def weekly_total_points():
     response = util.get_details_response().json()
     entry_names = util.get_entry_names()
     columns = util.get_columns()
-    row = [x + 1 for x in range(util.get_rows())]
+    row = util.get_rows()
     matches = util.get_matches()
 
     new_columns = [entry_names[x] for x in columns]
