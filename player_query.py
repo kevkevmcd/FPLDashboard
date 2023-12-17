@@ -115,3 +115,12 @@ def get_player_history(player_name):
     df["Bps"] = bps
 
     return df
+
+
+def get_picture(player_name):
+    player_id = util.get_player_id(player_name)
+    player_code = util.get_player_code(player_id)
+
+    player_picture_link = util.get_player_picture(player_code)
+
+    return player_picture_link

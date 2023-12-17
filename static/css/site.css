@@ -37,7 +37,14 @@
     100% { transform: rotate(360deg); }
   }
 
-  .td-center {
-    text-align: center;
+  .btn-purple {
+    color: #fff;
+    background-color: #37003c;
+    border-color: #37003c;
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+  }
+  
+  .btn-purple:hover {
+    background-color: lighten(#37003c, 20%) !important; /* Adjust the percentage as needed */
   }
   

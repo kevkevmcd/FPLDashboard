@@ -32,7 +32,8 @@ def weekly_trades():
 
     teams = {entry["entry_id"]: entry["entry_name"] for entry in league_entries}
     columns = list(teams.values())
-    index = util.get_rows()
+    gameweek = util.get_upcoming_gameweek()
+    index = [x + 1 for x in range(gameweek)]
     df = pd.DataFrame(0, columns=columns, index=index)
 
     for transaction in transactions:
@@ -52,7 +53,8 @@ def weekly_total_points():
     response = util.get_details_response().json()
     entry_names = util.get_entry_names()
     columns = util.get_columns()
-    row = util.get_rows()
+    gameweek = util.get_upcoming_gameweek()
+    row = [x + 1 for x in range(gameweek)]
     matches = util.get_matches()
 
     new_columns = [entry_names[x] for x in columns]
@@ -60,6 +62,9 @@ def weekly_total_points():
 
     for match in matches:
         event = match["event"]
+        if event > gameweek:
+            break
+
         league_entry_1 = match["league_entry_1"]
         league_entry_1_points = match["league_entry_1_points"]
         league_entry_2 = match["league_entry_2"]
@@ -135,6 +140,35 @@ def weekly_win_loss_points():
 
     points_df_cumsum = points_df
     return points_df_cumsum
+
+# returns dataframe for each players win/loss/draw points each week
+def weekly_win_loss_points_for_table():
+    entry_names = util.get_entry_names()
+    matches = util.get_matches()
+    points_df = weekly_total_points().astype(float)
+
+    for match in matches:
+        event = match["event"]
+        if match["finished"] == True:
+            league_entry_1 = entry_names[match["league_entry_1"]]
+            league_entry_1_points = match["league_entry_1_points"]
+            league_entry_2 = entry_names[match["league_entry_2"]]
+            league_entry_2_points = match["league_entry_2_points"]
+
+            if league_entry_1_points > league_entry_2_points:
+                points_df.at[event, league_entry_1] = "W"
+                points_df.at[event, league_entry_2] = "L"
+            elif league_entry_1_points < league_entry_2_points:
+                points_df.at[event, league_entry_1] = "L"
+                points_df.at[event, league_entry_2] = "W"
+            else:
+                points_df.at[event, league_entry_1] = "D"
+                points_df.at[event, league_entry_2] = "D"
+
+    points_df_cumsum = points_df.style.applymap(util.style_results)
+    styled_df = points_df_cumsum.set_table_styles([{'selector': 'td', 'props': [('text-align', 'center')]}])
+    
+    return styled_df
 
 
 # returns dataframe for each players total points their players have scored
@@ -219,27 +253,27 @@ def combined_table():
     FINALFINAL_DF = pd.merge(pick_order(), final_df, on="Team")
     FINALFINAL_DF[""] = FINALFINAL_DF["Team"].apply(util.make_team_name_link)
     FINALFINAL_DF = FINALFINAL_DF.sort_values(by="Points", ascending=False)
-    FINALFINAL_DF = FINALFINAL_DF.reset_index().drop("index", axis=1)
+
+    # Reset the index, add 1 to start the index at 1, and drop the old index column
+    FINALFINAL_DF = FINALFINAL_DF.reset_index(drop=True)
+    FINALFINAL_DF.index = FINALFINAL_DF.index + 1
 
     return FINALFINAL_DF
 
 def premier_league_fixtures():
-    fixtures = util.get_this_weeks_fixtures_response().json()
+    upcoming_gameweek = util.get_upcoming_gameweek()
+    fixtures = util.get_this_weeks_fixtures_response(upcoming_gameweek).json()
     matches = {}
     home_teams = []
     away_teams = []
     index = []
-    upcoming_gameweek = util.get_upcoming_gameweek()
-
+    
     for fixture in fixtures:
-        if fixture["event"] != upcoming_gameweek:
-            break
-        else:
+        if fixture["event"] == upcoming_gameweek:
             home_team = util.get_team_name(fixture["team_h"])
             away_team = util.get_team_name(fixture["team_a"])
             home_teams.append(home_team)
             away_teams.append(away_team)
-
             index.append("")
 
     matches["Home"] = home_teams

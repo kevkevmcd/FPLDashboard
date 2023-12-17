@@ -34,6 +34,12 @@ def get_player_web_name(id):
     for i in get_static_elements():
         if id == i["id"]:
             return i["web_name"]
+        
+        
+def get_player_code(id):
+    for i in get_static_elements():
+        if id == i["id"]:
+            return i["code"]
 
 
 def get_player_id(player_name):
@@ -130,9 +136,9 @@ def get_static_elements_response():
 
     return response
 
-def get_this_weeks_fixtures_response():
+def get_this_weeks_fixtures_response(gameweek):
     response = requests.get(
-        "https://fantasy.premierleague.com/api/fixtures?future=1"
+        f"https://fantasy.premierleague.com/api/fixtures?event={gameweek}"
     )
 
     return response
@@ -156,9 +162,9 @@ def get_team_details_response(gameweek, team_id):
     return response
 
 def get_player_picture(code):
-    response = requests.get(f"https://resources.premierleague.com/premierleague/photos/players/110x140/{code}.png")
+    url = f"https://resources.premierleague.com/premierleague/photos/players/110x140/p{code}.png"
 
-    return response
+    return url
 
 def get_club_picture(code):
     response = requests.get(f"https://resources.premierleague.com/premierleague/badges/{code}.png")
@@ -178,12 +184,8 @@ def get_current_gameweek():
 
 def get_upcoming_gameweek():
     response = get_current_event_response().json()
-    week = None
+    week = response["current_event"]
 
-    if response["current_event_finished"] != True:
-        current_week = response["current_event"]
-        week = current_week
-    
     if response["current_event_finished"] == True:
         upcoming_gameweek = response["next_event"]
         week = upcoming_gameweek
@@ -301,3 +303,15 @@ def get_manager_team_name_for_fixtures(id):
         if id == i["id"]:
             return i["entry_name"]
     return "Unknown"
+
+def style_results(val):
+    style = ''
+    if val == 'W':
+        style = 'background-color: green; color: white;'
+    elif val == 'L':
+        style = 'background-color: red; color: white;'
+    elif val == 'D':
+        style = 'background-color: gray; color: white;'
+    
+    # Add centering style
+    return f'{style} text-align: center;'

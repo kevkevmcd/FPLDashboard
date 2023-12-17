@@ -8,29 +8,52 @@
     <link rel="stylesheet" type="text/css" href="static/css/site.css">
     <script src="static/js/script.js"></script>
 </head>
-<body>
-    <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white">
-        </a>
-    </header>
+<body style="background-image: url('static/background.jpg'); background-size: cover; background-repeat: no-repeat;">
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
+            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary shadow" style="max-height: 30vh; overflow-y: auto; border-radius: 10px;">
                 <!-- Left Sidebar Content -->
                 <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="leftSidebarMenu" aria-labelledby="leftSidebarMenuLabel">
                     <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                        <h6>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-google" viewBox="0 0 16 16">
+                                <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
+                            </svg>
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;"> Spreadsheets </font>
+                            </font>
+                        </h6>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="https://docs.google.com/document/d/1-zaMsgu_BuSmEUgVuc4U3e-IlRuZVT645mcjRuakGGE/edit#heading=h.xy747o45m4qt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-day" viewBox="0 0 16 16">
+                                        <path d="M4.684 12.523v-2.3h2.261v-.61H4.684V7.801h2.464v-.61H4v5.332zm3.296 0h.676V9.98c0-.554.227-1.007.953-1.007.125 0 .258.004.329.015v-.613a1.806 1.806 0 0 0-.254-.02c-.582 0-.891.32-1.012.567h-.02v-.504H7.98v4.105zm2.805-5.093c0 .238.192.425.43.425a.428.428 0 1 0 0-.855.426.426 0 0 0-.43.43m.094 5.093h.672V8.418h-.672z"/>
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+                                        <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
+                                    </svg>
                                     <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> dashboard </font>
+                                        <font style="vertical-align: inherit;"> Weekly Updates </font>
                                     </font>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{{ url_for('transactions_dash') }}">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="https://docs.google.com/spreadsheets/d/1cz9ArNdcdyjYWRvl9d2zBRdLVpbzuKW8gMSnZwGMw9I/edit#gid=1162911878">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+                                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+                                    </svg>
                                     <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> Transaction History -> </font>
+                                        <font style="vertical-align: inherit;"> League Documents </font>
+                                    </font>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="https://discord.com/channels/1003362033259003944/1003362033259003947">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
+                                        <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+                                    </svg>
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"> Discord </font>
                                     </font>
                                 </a>
                             </li>
@@ -38,9 +61,12 @@
                         <hr class="my-3">
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('weekly_dash')}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
+                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z"/>
+                                    </svg>
                                     <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> other </font>
+                                        <font style="vertical-align: inherit;"> Dashboard </font>
                                     </font>
                                 </a>
                             </li>
@@ -49,35 +75,47 @@
                 </div>
             </div>
             <main class="col-md-6 col-lg-8 px-md-4">
-                <div class="justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 style="text-align: center;">
-                        {{ name }}
-                    </h1>
-                </div>
-                <div class="table-responsive small shadow">
-                    <table>
-                        <tbody>
-                            {{ tables[0]|safe }}
-                        </tbody>
-                    </table>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 style="text-align: center;">
+                                {{ name }}
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive small shadow">
+                            <table>
+                                <tbody>
+                                    {{ tables[0]|safe }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <br>
-                <div class="justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h3 style="text-align: center;">
-                        Gameweek {{ week }}
-                    </h3>
-                </div>
-                <div class="table-responsive small shadow">
-                    <table class="table table-dark table-striped table-hover">
-                        <tbody>
-                            {{ tables[2]|safe }}
-                        </tbody>
-                    </table>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h3 style="text-align: center;">
+                                Gameweek {{ week }}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive small shadow">
+                            <table class="table table-dark table-striped table-hover">
+                                <tbody>
+                                    {{ tables[2]|safe }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <br>
             </main>
-            <div class="sidebar border border-left col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
-                <!-- Right Sidebar Content -->
+            <div class="sidebar border border-left col-md-3 col-lg-2 p-0 bg-body-tertiary shadow" style="max-height: 70vh; overflow-y: auto; border-radius: 10px;">
+                <!-- Right Sidebar Content (Table and Button) -->
                 <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="rightSidebarMenu" aria-labelledby="rightSidebarMenuLabel">
                     <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <!-- Table in the right sidebar -->
@@ -93,33 +131,16 @@
                                 </tbody>
                             </table>
                         </div>
-                        <hr class="my-3">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
-                                    <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> dashboard </font>
-                                    </font>
+                        <br>
+                        <hr class="my-3 shadow" style="background-color: dodgerblue;">
+                        <!-- Button in the right sidebar -->
+                        <div class="text-center">
+                            <button class="btn btn-purple shadow col-10">
+                                <a class="nav-link" href="https://www.premierleague.com/tables" style="font-size: smaller;">
+                                    Premier League Table
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
-                                    <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> weekly </font>
-                                    </font>
-                                </a>
-                            </li>
-                        </ul>
-                        <hr class="my-3">
-                        <ul class="nav flex-column mb-auto">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#">
-                                    <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;"> other </font>
-                                    </font>
-                                </a>
-                            </li>
-                        </ul>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

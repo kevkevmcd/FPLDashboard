@@ -5,21 +5,23 @@ from player_query import (
     get_player_name,
     get_owner_info,
     get_player_history,
+    get_picture
 )
 from util import(
     get_league_name,
     get_manager_name_without_comma,
     get_league_team_names,
     get_upcoming_gameweek,
+    style_results
 )
 from league_dataframes import(
     combined_table,
     point_differential,
-    weekly_total_points,
     weekly_trades,
     weekly_win_loss_points_cumsum,
     premier_league_fixtures,
-    league_fixtures
+    league_fixtures,
+    weekly_win_loss_points_for_table
 )
 from squad_query import(
     get_manager_id,
@@ -108,32 +110,23 @@ def home():
 
 # Weekly table dashboard
 @app.route("/weekly_dashboard")
+@cache.cached(timeout=1000)
 def weekly_dash():
     return render_template(
         "weekly.html",
         tables=[
-            weekly_total_points().to_html(
+            weekly_win_loss_points_for_table().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
-                justify="left",
-            ),
-            weekly_win_loss_points_cumsum().to_html(
-                classes=["table table-dark", "table-striped", "table-hover"],
-                justify="left",
+                justify="center",
             ),
             weekly_trades().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
                 justify="left",
-            ),
-            point_differential().to_html(
-                classes=["table table-dark", "table-striped", "table-hover"],
-                justify="left",
-            ),
+            )
         ],
         titles=[
             "Weekly Points Scored",
-            "Points Per Week",
-            "Total Weekly Trades",
-            "Point Differentials",
+            "Total Weekly Trades"
         ],
     )
 
@@ -167,6 +160,7 @@ def player_search():
     owner_info = ""
     title = ""
     classes = []
+    picture = ""
     if request.method == "POST":
         # If get_player_name fails, it will return an empty string (for now).
         player_name = get_player_name(request.form["player_name"])
@@ -175,6 +169,7 @@ def player_search():
         else:
             player_info = get_player_info(request.form["player_name"])
             owner_info = get_owner_info(request.form["player_name"])
+            picture = get_picture(request.form["player_name"])
             title = "Match History"
             classes = ["table table-dark", "table-striped", "table-hover", "table-sm"]
     return render_template(
@@ -182,6 +177,7 @@ def player_search():
         player_name=player_name,
         player_info=player_info,
         owner_info=owner_info,
+        picture=picture,
         player_history=get_player_history(player_name).to_html(
             classes=classes,
             justify="left",
@@ -191,7 +187,7 @@ def player_search():
     )
 
 @app.route("/manager_search/<name>", methods=["POST"])
-@cache.cached(timeout=600)
+@cache.cached(timeout=1000)
 def manager_search(name):
     team_name = ""
     manager_name = ""
