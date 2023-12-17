@@ -165,7 +165,7 @@ def weekly_win_loss_points_for_table():
                 points_df.at[event, league_entry_1] = "D"
                 points_df.at[event, league_entry_2] = "D"
 
-    points_df_cumsum = points_df.style.applymap(util.style_results)
+    points_df_cumsum = points_df.style.map(util.style_results)
     styled_df = points_df_cumsum.set_table_styles([{'selector': 'td', 'props': [('text-align', 'center')]}])
     
     return styled_df
