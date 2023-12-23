@@ -125,8 +125,8 @@ def weekly_dash():
             )
         ],
         titles=[
-            "Weekly Points Scored",
-            "Total Weekly Trades"
+            "Weekly Win/Loss",
+            "Weekly Total Trades"
         ],
     )
 
