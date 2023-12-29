@@ -1,6 +1,7 @@
 import pandas as pd
 import util
 import requests
+from requests.exceptions import RequestException, HTTPError, ConnectionError
 
 
 # Returns the full name of the player name provided. Returns an empty string if the player cannot be found.
@@ -46,74 +47,97 @@ def get_player_history(player_name):
     if player_name == "":
         return df
 
-    week = []
-    opponent = []
-    home_away = []
-    minutes = []
-    points = []
-    goals = []
-    assists = []
-    clean_sheets = []
-    goals_conceded = []
-    yellows = []
-    reds = []
-    saves = []
-    bonus = []
-    bps = []
-    player_id = util.get_player_id(player_name)
-    player_summary = requests.get(
-        f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
-    )
-    for i in player_summary.json()["history"]:
-        week.append(i["round"])
-        opponent.append(util.get_team_from_id(i["opponent_team"]))
-        if i["was_home"]:
-            home_away.append("H")
-        else:
-            home_away.append("A")
-        minutes.append(i["minutes"])
-        points.append(i["total_points"])
-        goals.append(i["goals_scored"])
-        assists.append(i["assists"])
-        clean_sheets.append(i["clean_sheets"])
-        goals_conceded.append(i["goals_conceded"])
-        yellows.append(i["yellow_cards"])
-        reds.append(i["red_cards"])
-        saves.append(i["saves"])
-        bonus.append(i["bonus"])
-        bps.append(i["bps"])
+    try:
+        week = []
+        opponent = []
+        home_away = []
+        minutes = []
+        points = []
+        goals = []
+        assists = []
+        clean_sheets = []
+        goals_conceded = []
+        yellows = []
+        reds = []
+        saves = []
+        bonus = []
+        bps = []
 
-    # Append with totals.
-    week.append("")
-    opponent.append("")
-    home_away.append("")
-    minutes.append(sum(minutes))
-    points.append(sum(points))
-    goals.append(sum(goals))
-    assists.append(sum(assists))
-    clean_sheets.append(sum(clean_sheets))
-    goals_conceded.append(sum(goals_conceded))
-    yellows.append(sum(yellows))
-    reds.append(sum(reds))
-    saves.append(sum(saves))
-    bonus.append(sum(bonus))
-    bps.append(sum(bps))
+        player_id = util.get_player_id(player_name)
+        if player_id is None:
+            # Handle the case when player_id is not found
+            return df
 
-    df["Gameweek"] = week
-    df["Opponent"] = opponent
-    df[""] = home_away
-    df["Minutes"] = minutes
-    df["Points"] = points
-    df["Goals"] = goals
-    df["Assists"] = assists
-    df["CS"] = clean_sheets
-    df["GC"] = goals_conceded
-    df["Yellows"] = yellows
-    df["Reds"] = reds
-    df["Saves"] = saves
-    df["Bonus"] = bonus
-    df["Bps"] = bps
+        player_summary = requests.get(
+            f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
+        )
 
+        # Raise an HTTPError for bad responses (4xx and 5xx status codes)
+        player_summary.raise_for_status()
+
+        for i in player_summary.json()["history"]:
+            week.append(i["round"])
+            opponent.append(util.get_team_from_id(i["opponent_team"]))
+            if i["was_home"]:
+                home_away.append("H")
+            else:
+                home_away.append("A")
+            minutes.append(i["minutes"])
+            points.append(i["total_points"])
+            goals.append(i["goals_scored"])
+            assists.append(i["assists"])
+            clean_sheets.append(i["clean_sheets"])
+            goals_conceded.append(i["goals_conceded"])
+            yellows.append(i["yellow_cards"])
+            reds.append(i["red_cards"])
+            saves.append(i["saves"])
+            bonus.append(i["bonus"])
+            bps.append(i["bps"])
+
+        # Append with totals.
+        week.append("")
+        opponent.append("")
+        home_away.append("")
+        minutes.append(sum(minutes))
+        points.append(sum(points))
+        goals.append(sum(goals))
+        assists.append(sum(assists))
+        clean_sheets.append(sum(clean_sheets))
+        goals_conceded.append(sum(goals_conceded))
+        yellows.append(sum(yellows))
+        reds.append(sum(reds))
+        saves.append(sum(saves))
+        bonus.append(sum(bonus))
+        bps.append(sum(bps))
+
+        df["Gameweek"] = week
+        df["Opponent"] = opponent
+        df[""] = home_away
+        df["Minutes"] = minutes
+        df["Points"] = points
+        df["Goals"] = goals
+        df["Assists"] = assists
+        df["CS"] = clean_sheets
+        df["GC"] = goals_conceded
+        df["Yellows"] = yellows
+        df["Reds"] = reds
+        df["Saves"] = saves
+        df["Bonus"] = bonus
+        df["Bps"] = bps
+
+        return df
+
+    except HTTPError as http_err:
+        # Handle HTTP errors (4xx and 5xx)
+        print(f"HTTP error occurred: {http_err}")
+    except ConnectionError as conn_err:
+        # Handle connection errors
+        print(f"Connection error occurred: {conn_err}")
+    except RequestException as req_err:
+        # Handle other request errors
+        print(f"Request error occurred: {req_err}")
+
+    # Return an empty DataFrame if an error occurs
     return df
 
 

@@ -43,6 +43,9 @@ def get_player_code(id):
 
 
 def get_player_id(player_name):
+    if player_name is None:
+        return None
+    
     player_name_lower = player_name.lower()
     for i in get_static_elements():
         if match_player_name(player_name_lower, i):
@@ -191,6 +194,16 @@ def get_upcoming_gameweek():
         week = upcoming_gameweek
     
     return week
+
+def get_previous_gameweek():
+    response = get_current_event_response().json()
+    week = response["current_event"]
+
+    if response["current_event_finished"] == False:
+        previous_gameweek = week - 1
+        week = previous_gameweek
+    
+    return week
     
 #Specific data from responses
 def get_matches():
@@ -301,7 +314,7 @@ def make_team_name_link(team_name):
 def get_manager_team_name_for_fixtures(id):
     for i in get_league_entries():
         if id == i["id"]:
-            return i["entry_name"]
+            return i["entry_name"] + " - " + i["short_name"]
     return "Unknown"
 
 def style_results(val):
@@ -315,3 +328,88 @@ def style_results(val):
     
     # Add centering style
     return f'{style} text-align: center;'
+
+def get_highest_score(entry_id):
+    matches = get_matches()
+    highest_points = 0
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id and highest_points < match["league_entry_1_points"]:
+                highest_points = match["league_entry_1_points"]
+            elif match["league_entry_2"] == id and highest_points < match["league_entry_2_points"]:
+                highest_points = match["league_entry_2_points"]
+
+    return highest_points
+
+def get_lowest_score(entry_id):
+    matches = get_matches()
+    lowest_points = 500
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id and lowest_points > match["league_entry_1_points"]:
+                lowest_points = match["league_entry_1_points"]
+            elif match["league_entry_2"] == id and lowest_points > match["league_entry_2_points"]:
+                lowest_points = match["league_entry_2_points"]
+
+    return lowest_points
+
+def get_average_points(entry_id):
+    matches = get_matches()
+    gameweek = get_previous_gameweek()
+    total_points = 0
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id:
+                total_points += match["league_entry_1_points"]
+            elif match["league_entry_2"] == id:
+                total_points += match["league_entry_2_points"]
+    
+    average_points = total_points / gameweek
+
+    rounded_average_points = round(average_points, 1)
+
+    return rounded_average_points
+
+def get_id_from_entry_id(entry_id):
+    league_entries = get_league_entries()
+    id = 0
+
+    for entry in league_entries:
+        if entry["entry_id"] == entry_id:
+            id = entry["id"]
+
+    return id
+
+def get_overall_highest_points():
+    league_entries = get_league_entries()
+    highest_points = 0
+    entry_name = ""
+
+    for entry in league_entries:
+        points = get_highest_score(entry["entry_id"])
+        if points > highest_points:
+            highest_points = points
+            entry_name = entry["entry_name"]
+
+    return {"highest_points": highest_points, "entry_name": entry_name}
+
+def get_overall_lowest_points():
+    league_entries = get_league_entries()
+    lowest_points = 500
+    entry_name = ""
+
+    for entry in league_entries:
+        points = get_lowest_score(entry["entry_id"])
+        if points < lowest_points:
+            lowest_points = points
+            entry_name = entry["entry_name"]
+
+    return {"lowest_points": lowest_points, "entry_name": entry_name}
+    
+            

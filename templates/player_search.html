@@ -6,27 +6,16 @@
     <link rel="stylesheet" type="text/css" href="static/css/site.css">
     <script src="static/js/script.js"></script>
   </head>
-  <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <h3 class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white">Player Info</h3>
-    <div class="input-group justify-content-center">
-      <span class="input-group-text" id="basic-addon1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-        </svg>
-      </span>
-      <form action="/player_search" method="POST" onsubmit="showLoading()">
-        <input type="text" class="form-control" name="player_name"
-        placeholder="Enter a player name!" aria-describedby="basic-addon1"
-        value="{{ request.form['player_name']}}"></input>
-      </form>
-    </div>
+  <header>
+    <a href="{{ url_for('player_search_form') }}" class="btn btn-primary">Back to Search</a>
   </header>
+  <br>
   <body>
+    {% if player_name != "" %}
     <div class="container-fluid">
       <div class="row">
         <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary shadow">
           <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-            {% if player_name != ""%}
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="sidebarMenuLabel">Player Info</h5>
             </div>
@@ -84,10 +73,6 @@
           {% endif %}
         </main>
       </div>
-    </div>
-    <div id="loading-spinner" class="loading-spinner">
-      <div class="spinner"></div>
-      <p id="loading-text" class="loading-text">Searching for player...</p>
     </div>
   </body>
 </html>

@@ -315,3 +315,14 @@ def league_fixtures():
     df = pd.DataFrame(fixtures, index=index)
 
     return df
+
+def get_largest_and_smallest_transactions():
+    trades_df = total_trades()
+
+    # Find the entry with the largest total transactions
+    largest_entry = trades_df.loc[trades_df['Total Trades'].idxmax()]
+
+    # Find the entry with the smallest total transactions
+    smallest_entry = trades_df.loc[trades_df['Total Trades'].idxmin()]
+
+    return largest_entry, smallest_entry

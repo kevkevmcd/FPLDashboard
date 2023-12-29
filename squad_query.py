@@ -1,6 +1,5 @@
 import pandas as pd
 import util
-import requests
 
 def get_manager_id(manager_name):
     entries = util.get_league_entries()

@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_caching import Cache
 from player_query import (
     get_player_info,
@@ -10,18 +10,20 @@ from player_query import (
 from util import(
     get_league_name,
     get_manager_name_without_comma,
-    get_league_team_names,
     get_upcoming_gameweek,
-    style_results
+    get_average_points,
+    get_highest_score,
+    get_lowest_score,
+    get_overall_highest_points,
+    get_overall_lowest_points
 )
 from league_dataframes import(
     combined_table,
-    point_differential,
     weekly_trades,
-    weekly_win_loss_points_cumsum,
     premier_league_fixtures,
     league_fixtures,
-    weekly_win_loss_points_for_table
+    weekly_win_loss_points_for_table,
+    get_largest_and_smallest_transactions
 )
 from squad_query import(
     get_manager_id,
@@ -31,7 +33,6 @@ from squad_query import(
 from trades import(
     net_points_trades,
     find_trades,
-    players_history
 )
 import os
 import pandas as pd
@@ -112,6 +113,9 @@ def home():
 @app.route("/weekly_dashboard")
 @cache.cached(timeout=1000)
 def weekly_dash():
+    highest_result = get_overall_highest_points()
+    lowest_result = get_overall_lowest_points()
+    largest_entry, smallest_entry = get_largest_and_smallest_transactions()
     return render_template(
         "weekly.html",
         tables=[
@@ -128,6 +132,14 @@ def weekly_dash():
             "Weekly Win/Loss",
             "Weekly Total Trades"
         ],
+        highest_points_team=highest_result["entry_name"],
+        highest_points=highest_result["highest_points"],
+        lowest_points_team=lowest_result["entry_name"],
+        lowest_points=lowest_result["lowest_points"],
+        largest_entry_team=largest_entry["Team"],
+        largest_entry_trades=largest_entry["Total Trades"],
+        smallest_entry_team=smallest_entry["Team"],
+        smallest_entry_trades=smallest_entry["Total Trades"]
     )
 
 @app.route("/transaction_history")
@@ -150,28 +162,33 @@ def transactions_dash():
         ],
     )
 
+# Player search form.
+@app.route('/player_search/', methods=['GET'])
+def player_search_form():
+    return render_template("player_search_form.html")
 
 # Player search dashboard.
-@app.route("/player_search", methods=["GET", "POST"])
+@app.route("/player_search/", methods=["POST"])
 def player_search():
-    # Initialize variables so that GET method has default values to pass to player_search.html
-    player_name = ""
-    player_info = ""
-    owner_info = ""
-    title = ""
-    classes = []
-    picture = ""
-    if request.method == "POST":
-        # If get_player_name fails, it will return an empty string (for now).
-        player_name = get_player_name(request.form["player_name"])
-        if player_name == "":
-            player_name = "Player not found"
-        else:
-            player_info = get_player_info(request.form["player_name"])
-            owner_info = get_owner_info(request.form["player_name"])
-            picture = get_picture(request.form["player_name"])
-            title = "Match History"
-            classes = ["table table-dark", "table-striped", "table-hover", "table-sm"]
+    input_player_name = get_player_name(request.form["player_name"])
+
+    if input_player_name:
+        # Redirect to the search results page with the player_name in the URL
+        return redirect(url_for("search_results", player_name=input_player_name))
+
+    # If player_name is not provided, render the initial search form template
+    return render_template("player_search_form.html")
+
+# Search results page.
+@app.route("/search_results/<string:player_name>", methods=["GET"])
+@cache.cached(timeout=1000)
+def search_results(player_name):
+    player_info = get_player_info(player_name)
+    owner_info = get_owner_info(player_name)
+    picture = get_picture(player_name)
+    title = "Match History"
+    classes = ["table", "table-dark", "table-striped", "table-hover", "table-sm"]
+
     return render_template(
         "player_search.html",
         player_name=player_name,
@@ -203,12 +220,18 @@ def manager_search(name):
     else:
         manager_name = get_manager_name_without_comma(manager_id)
         squad = get_squad_info(manager_id)     
+        highest_score = get_highest_score(manager_id)
+        lowest_score = get_lowest_score(manager_id)
+        average_points = get_average_points(manager_id)
         title = "Team"
         classes = ["table table-dark", "table-striped", "table-hover", "table-sm"]
     return render_template(
         "manager_search.html",
         team_name=team_name,
         manager_name=manager_name,
+        highest_score=highest_score,
+        lowest_score=lowest_score,
+        average_points=average_points,
         squad=squad.to_html(
             classes=classes,
             justify="left",

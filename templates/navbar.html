@@ -26,7 +26,7 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="{{ url_for('player_search')}}"
+            <a class="nav-link active" href="{{ url_for('player_search', player_name=player_name) if player_name else url_for('player_search') }}"
               >Player Search</a
             >
           </li>
