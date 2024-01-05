@@ -1,5 +1,7 @@
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_caching import Cache
+import os
+import pandas as pd
 from player_query import (
     get_player_info,
     get_player_name,
@@ -7,9 +9,14 @@ from player_query import (
     get_player_history,
     get_picture
 )
-from util import(
+from league_dataframes import(
+    combined_table,
+    weekly_trades,
+    premier_league_fixtures,
+    league_fixtures,
+    weekly_win_loss_points_for_table,
+    get_largest_and_smallest_transactions,
     get_league_name,
-    get_manager_name_without_comma,
     get_upcoming_gameweek,
     get_average_points,
     get_highest_score,
@@ -17,25 +24,12 @@ from util import(
     get_overall_highest_points,
     get_overall_lowest_points
 )
-from league_dataframes import(
-    combined_table,
-    weekly_trades,
-    premier_league_fixtures,
-    league_fixtures,
-    weekly_win_loss_points_for_table,
-    get_largest_and_smallest_transactions
-)
 from squad_query import(
     get_manager_id,
     get_squad_info,
-    get_team_name
+    get_team_name,
+    get_manager_name_without_comma
 )
-from trades import(
-    net_points_trades,
-    find_trades,
-)
-import os
-import pandas as pd
 
 config = {
     "DEBUG": True,          # some Flask specific configs
@@ -51,7 +45,6 @@ cache = Cache(app)
 SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY
 
-code = 0
 # Gets league code from inital page and updates all the global variables to be specific to league
 @app.route("/", methods=["GET", "POST"])
 def league_code():
@@ -59,12 +52,12 @@ def league_code():
         cache.clear()
 
     if request.method == "POST":
-        leagueCode = int(request.form["leagueCode"])
-        global code
-        code = leagueCode
+        league_code = int(request.form["leagueCode"])
 
-        if code == 0:
+        if league_code == 0:
             flash("Please Enter a League Code!")
+        else:
+            session["league_code"] = league_code
 
         return redirect(url_for("home"))
 
@@ -121,7 +114,7 @@ def weekly_dash():
         tables=[
             weekly_win_loss_points_for_table().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
-                justify="center",
+                justify="center"
             ),
             weekly_trades().to_html(
                 classes=["table table-dark", "table-striped", "table-hover"],
@@ -140,26 +133,6 @@ def weekly_dash():
         largest_entry_trades=largest_entry["Total Trades"],
         smallest_entry_team=smallest_entry["Team"],
         smallest_entry_trades=smallest_entry["Total Trades"]
-    )
-
-@app.route("/transaction_history")
-def transactions_dash():
-    return render_template(
-        "transactions.html",
-        tables=[
-            find_trades().to_html(
-                classes=["table table-dark", "table-striped", "table-hover"],
-                justify="left",
-            ),
-           net_points_trades().to_html(
-                classes=["table table-dark", "table-striped", "table-hover"],
-                justify="left",
-            )
-        ],
-        titles=[
-            "Trade Tracker",
-            "Net Points Trades",
-        ],
     )
 
 # Player search form.
@@ -242,4 +215,4 @@ def manager_search(name):
     
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(3000), debug=True)

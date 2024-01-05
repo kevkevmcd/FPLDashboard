@@ -1,11 +1,28 @@
 import pandas as pd
-import util
 import numpy as np
+from util import(
+    get_standings,
+    get_transactions,
+    get_league_entries,
+    get_details_response,
+    get_entry_names,
+    get_columns,
+    get_matches,
+    style_results,
+    get_choices,
+    get_team_name,
+    get_manager_team_name_for_fixtures,
+    get_league,
+)
+from premier_league_api import(
+    get_this_weeks_fixtures_response,
+    get_current_event_response
+)
 
 # returns dataframe for player point differentials
 def point_differential():
-    entry_names = util.get_entry_names()
-    standings = util.get_standings()
+    entry_names = get_entry_names()
+    standings = get_standings()
 
     team_diffs = {}
     for team in standings:
@@ -27,12 +44,12 @@ def point_differential():
 
 # returns dataframe for each players transactions each week
 def weekly_trades():
-    transactions = util.get_transactions()
-    league_entries = util.get_league_entries()
+    transactions = get_transactions()
+    league_entries = get_league_entries()
 
     teams = {entry["entry_id"]: entry["entry_name"] for entry in league_entries}
     columns = list(teams.values())
-    gameweek = util.get_upcoming_gameweek()
+    gameweek = get_upcoming_gameweek()
     index = [x + 1 for x in range(gameweek)]
     df = pd.DataFrame(0, columns=columns, index=index)
 
@@ -50,12 +67,12 @@ def weekly_trades():
 
 # returns dataframe for each players total amount of points scored per week
 def weekly_total_points():
-    response = util.get_details_response().json()
-    entry_names = util.get_entry_names()
-    columns = util.get_columns()
-    gameweek = util.get_upcoming_gameweek()
+    response = get_details_response().json()
+    entry_names = get_entry_names()
+    columns = get_columns()
+    gameweek = get_upcoming_gameweek()
     row = [x + 1 for x in range(gameweek)]
-    matches = util.get_matches()
+    matches = get_matches()
 
     new_columns = [entry_names[x] for x in columns]
     df = pd.DataFrame(response, columns=new_columns, index=row)
@@ -78,8 +95,8 @@ def weekly_total_points():
 
 # returns dataframe for each players win/loss/draw points each week added to what they already had
 def weekly_win_loss_points_cumsum():
-    entry_names = util.get_entry_names()
-    matches = util.get_matches()
+    entry_names = get_entry_names()
+    matches = get_matches()
     points_df = weekly_total_points().astype(float)
 
     for match in matches:
@@ -111,8 +128,8 @@ def weekly_win_loss_points_cumsum():
 
 # returns dataframe for each players win/loss/draw points each week
 def weekly_win_loss_points():
-    entry_names = util.get_entry_names()
-    matches = util.get_matches()
+    entry_names = get_entry_names()
+    matches = get_matches()
     points_df = weekly_total_points().astype(float)
 
     for match in matches:
@@ -143,8 +160,8 @@ def weekly_win_loss_points():
 
 # returns dataframe for each players win/loss/draw points each week
 def weekly_win_loss_points_for_table():
-    entry_names = util.get_entry_names()
-    matches = util.get_matches()
+    entry_names = get_entry_names()
+    matches = get_matches()
     points_df = weekly_total_points().astype(float)
 
     for match in matches:
@@ -165,8 +182,8 @@ def weekly_win_loss_points_for_table():
                 points_df.at[event, league_entry_1] = "D"
                 points_df.at[event, league_entry_2] = "D"
 
-    points_df_cumsum = points_df.style.map(util.style_results)
-    styled_df = points_df_cumsum.set_table_styles([{'selector': 'td', 'props': [('text-align', 'center')]}])
+    styled_df = points_df.style.apply(lambda x: x.map(style_results))
+    styled_df = styled_df.set_table_styles([{'selector': 'td', 'props': [('text-align', 'center')]}])
     
     return styled_df
 
@@ -215,7 +232,7 @@ def total_trades():
 
 # returns dataframe for each players initial pick position
 def pick_order():
-    choices = util.get_choices()
+    choices = get_choices()
 
     pick_order_dict = {}
 
@@ -230,6 +247,9 @@ def pick_order():
     pick_order_df = pick_order_df.rename(columns={"index": "Team"})
 
     return pick_order_df
+
+def make_team_name_link(team_name):
+    return f'<form method="POST" action="/manager_search/{team_name}"><button type="submit" class="btn btn-link"><div class="input-group justify-content-center"><span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg></span></div></button></form>'
 
 
 # returns a combined dataframe displaying Team name, pick position, W/L points, Total Points scored, Total Transactions, Point difference
@@ -251,7 +271,7 @@ def combined_table():
     final_df.index = np.arange(1, len(final_df) + 1)
 
     FINALFINAL_DF = pd.merge(pick_order(), final_df, on="Team")
-    FINALFINAL_DF[""] = FINALFINAL_DF["Team"].apply(util.make_team_name_link)
+    FINALFINAL_DF[""] = FINALFINAL_DF["Team"].apply(make_team_name_link)
     FINALFINAL_DF = FINALFINAL_DF.sort_values(by="Points", ascending=False)
 
     # Reset the index, add 1 to start the index at 1, and drop the old index column
@@ -261,8 +281,8 @@ def combined_table():
     return FINALFINAL_DF
 
 def premier_league_fixtures():
-    upcoming_gameweek = util.get_upcoming_gameweek()
-    fixtures = util.get_this_weeks_fixtures_response(upcoming_gameweek).json()
+    upcoming_gameweek = get_upcoming_gameweek()
+    fixtures = get_this_weeks_fixtures_response(upcoming_gameweek).json()
     matches = {}
     home_teams = []
     away_teams = []
@@ -270,8 +290,8 @@ def premier_league_fixtures():
     
     for fixture in fixtures:
         if fixture["event"] == upcoming_gameweek:
-            home_team = util.get_team_name(fixture["team_h"])
-            away_team = util.get_team_name(fixture["team_a"])
+            home_team = get_team_name(fixture["team_h"])
+            away_team = get_team_name(fixture["team_a"])
             home_teams.append(home_team)
             away_teams.append(away_team)
             index.append("")
@@ -284,8 +304,8 @@ def premier_league_fixtures():
     return df
 
 def league_fixtures():
-    matches = util.get_matches()
-    gameweek = util.get_upcoming_gameweek()
+    matches = get_matches()
+    gameweek = get_upcoming_gameweek()
     home_teams = []
     home_scores = []
     away_teams = []
@@ -295,9 +315,9 @@ def league_fixtures():
 
     for match in matches:
         if match["event"] == gameweek:
-            home_team = util.get_manager_team_name_for_fixtures(match["league_entry_1"])
+            home_team = get_manager_team_name_for_fixtures(match["league_entry_1"])
             home_score = match["league_entry_1_points"]
-            away_team = util.get_manager_team_name_for_fixtures(match["league_entry_2"])
+            away_team = get_manager_team_name_for_fixtures(match["league_entry_2"])
             away_score = match["league_entry_2_points"]
 
             home_teams.append(home_team)
@@ -326,3 +346,118 @@ def get_largest_and_smallest_transactions():
     smallest_entry = trades_df.loc[trades_df['Total Trades'].idxmin()]
 
     return largest_entry, smallest_entry
+
+def get_league_name():
+    league = get_league()
+    league_name = league["name"]
+
+    return league_name
+
+def get_current_gameweek():
+    response = get_current_event_response().json()
+    current_event = response["current_event"]
+
+    return current_event
+
+def get_upcoming_gameweek():
+    response = get_current_event_response().json()
+    week = response["current_event"]
+
+    if response["current_event_finished"] == True:
+        upcoming_gameweek = response["next_event"]
+        week = upcoming_gameweek
+    
+    return week
+
+def get_previous_gameweek():
+    response = get_current_event_response().json()
+    week = response["current_event"]
+
+    if response["current_event_finished"] == False:
+        previous_gameweek = week - 1
+        week = previous_gameweek
+    
+    return week
+
+def get_highest_score(entry_id):
+    matches = get_matches()
+    highest_points = 0
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id and highest_points < match["league_entry_1_points"]:
+                highest_points = match["league_entry_1_points"]
+            elif match["league_entry_2"] == id and highest_points < match["league_entry_2_points"]:
+                highest_points = match["league_entry_2_points"]
+
+    return highest_points
+
+def get_lowest_score(entry_id):
+    matches = get_matches()
+    lowest_points = 500
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id and lowest_points > match["league_entry_1_points"]:
+                lowest_points = match["league_entry_1_points"]
+            elif match["league_entry_2"] == id and lowest_points > match["league_entry_2_points"]:
+                lowest_points = match["league_entry_2_points"]
+
+    return lowest_points
+
+def get_average_points(entry_id):
+    matches = get_matches()
+    gameweek = get_previous_gameweek()
+    total_points = 0
+    id = get_id_from_entry_id(entry_id)
+
+    for match in matches:
+        if match["finished"] == True:
+            if match["league_entry_1"] == id:
+                total_points += match["league_entry_1_points"]
+            elif match["league_entry_2"] == id:
+                total_points += match["league_entry_2_points"]
+    
+    average_points = total_points / gameweek
+
+    rounded_average_points = round(average_points, 1)
+
+    return rounded_average_points
+
+def get_id_from_entry_id(entry_id):
+    league_entries = get_league_entries()
+    id = 0
+
+    for entry in league_entries:
+        if entry["entry_id"] == entry_id:
+            id = entry["id"]
+
+    return id
+
+def get_overall_highest_points():
+    league_entries = get_league_entries()
+    highest_points = 0
+    entry_name = ""
+
+    for entry in league_entries:
+        points = get_highest_score(entry["entry_id"])
+        if points > highest_points:
+            highest_points = points
+            entry_name = entry["entry_name"]
+
+    return {"highest_points": highest_points, "entry_name": entry_name}
+
+def get_overall_lowest_points():
+    league_entries = get_league_entries()
+    lowest_points = 500
+    entry_name = ""
+
+    for entry in league_entries:
+        points = get_lowest_score(entry["entry_id"])
+        if points < lowest_points:
+            lowest_points = points
+            entry_name = entry["entry_name"]
+
+    return {"lowest_points": lowest_points, "entry_name": entry_name}

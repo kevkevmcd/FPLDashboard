@@ -1,8 +1,13 @@
 import pandas as pd
-import util
+from util import(
+    get_league_entries,
+    match_team_name,
+    get_static_elements,
+    get_manager_squad
+)
 
 def get_manager_id(manager_name):
-    entries = util.get_league_entries()
+    entries = get_league_entries()
     manager_id = 0
 
     for entry in entries:
@@ -13,13 +18,13 @@ def get_manager_id(manager_name):
 
 def get_team_name(team_name):
     team_name_lower = team_name.lower()
-    for i in util.get_league_entries():
-        if util.match_team_name(team_name_lower, i):
+    for i in get_league_entries():
+        if match_team_name(team_name_lower, i):
             return i["entry_name"]
     return ""
 
 def get_player_totals(player_id):
-    elements = util.get_static_elements()
+    elements = get_static_elements()
     df = pd.DataFrame()
 
     name = []
@@ -71,10 +76,17 @@ def get_squad_info(manager_id):
     if manager_id == 0:
         return df
 
-    squad = util.get_manager_squad(manager_id)
+    squad = get_manager_squad(manager_id)
 
     for player in squad:
         player_info = get_player_totals(player)
         df = pd.concat([df, player_info], ignore_index=True).sort_values(by="Total Points", ascending=False)
 
     return df
+
+#This is just temporary, I will get rid of this when I don't feel like being lazy
+def get_manager_name_without_comma(id):
+    for i in get_league_entries():
+        if id == i["entry_id"]:
+            return i["player_first_name"] + " " + i["player_last_name"]
+    return ""

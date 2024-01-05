@@ -1,7 +1,20 @@
 import pandas as pd
-import util
 import requests
 from requests.exceptions import RequestException, HTTPError, ConnectionError
+from util import(
+    get_static_elements,
+    match_player_name,
+    get_team_from_id,
+    get_player_position,
+    get_player_id,
+    get_player_owner,
+    get_manager_team_name,
+    get_manager_name,
+    get_player_code
+)
+from premier_league_api import(
+    get_player_picture
+)
 
 
 # Returns the full name of the player name provided. Returns an empty string if the player cannot be found.
@@ -10,8 +23,8 @@ def get_player_name(player_name):
     player_name_lower = player_name.lower()
     # TODO(mgribbins567): Add handling for player's with annoying letters, and searching using non-web_name (first/last/nickname).
     # TODO(mgribbins567): Stretch goal: add best-guess search for misspellings etc.
-    for i in util.get_static_elements():
-        if util.match_player_name(player_name_lower, i):
+    for i in get_static_elements():
+        if match_player_name(player_name_lower, i):
             return i["first_name"] + " " + i["second_name"]
     return ""
 
@@ -20,23 +33,23 @@ def get_player_name(player_name):
 def get_player_info(player_name):
     # TODO: Might want to call get_player_name or another util to use ID based matching once we implement better searching.
     player_name_lower = player_name.lower()
-    for i in util.get_static_elements():
-        if util.match_player_name(player_name_lower, i):
+    for i in get_static_elements():
+        if match_player_name(player_name_lower, i):
             player_position = i["element_type"]
             player_team = i["team"]
             break
     return (
-        util.get_team_from_id(player_team)
+        get_team_from_id(player_team)
         + " "
-        + util.get_player_position(player_position)
+        + get_player_position(player_position)
     )
 
 
 # Returns the manager team name and manager name for the player provided.
 def get_owner_info(player_name):
-    player_id = util.get_player_id(player_name)
-    owner_id = util.get_player_owner(player_id)
-    return util.get_manager_team_name(owner_id) + util.get_manager_name(owner_id)
+    player_id = get_player_id(player_name)
+    owner_id = get_player_owner(player_id)
+    return get_manager_team_name(owner_id) + get_manager_name(owner_id)
 
 
 # Returns a DataFrame for the player's history.
@@ -63,7 +76,7 @@ def get_player_history(player_name):
         bonus = []
         bps = []
 
-        player_id = util.get_player_id(player_name)
+        player_id = get_player_id(player_name)
         if player_id is None:
             # Handle the case when player_id is not found
             return df
@@ -77,7 +90,7 @@ def get_player_history(player_name):
 
         for i in player_summary.json()["history"]:
             week.append(i["round"])
-            opponent.append(util.get_team_from_id(i["opponent_team"]))
+            opponent.append(get_team_from_id(i["opponent_team"]))
             if i["was_home"]:
                 home_away.append("H")
             else:
@@ -142,9 +155,9 @@ def get_player_history(player_name):
 
 
 def get_picture(player_name):
-    player_id = util.get_player_id(player_name)
-    player_code = util.get_player_code(player_id)
+    player_id = get_player_id(player_name)
+    player_code = get_player_code(player_id)
 
-    player_picture_link = util.get_player_picture(player_code)
+    player_picture_link = get_player_picture(player_code)
 
     return player_picture_link
